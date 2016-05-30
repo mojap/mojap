@@ -7,7 +7,7 @@ function fromMoment(dateMoment) {
 }
 
 var config ={
-	mongoUrl:"mongodb://localhost:27017/mojap"
+	mongoUrl:process.env.MONGOLAB_URI || "mongodb://localhost:27017/mojap"
 }
 
 module.exports = {
