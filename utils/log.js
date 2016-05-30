@@ -7,5 +7,6 @@ function sever(msg){
 }
 
 module.exports={
-	info:info
+	info:info,
+	sever:sever
 }

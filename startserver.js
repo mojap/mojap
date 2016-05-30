@@ -7,6 +7,7 @@
 var app = require('./app');
 var debug = require('debug')('app');
 var http = require('http');
+console.log("MONGOLAB_URI::"+process.env.MONGOLAB_URI)
 var require = require('./models/dbconnect')
 /**
  * Get port from environment and store in Express.
