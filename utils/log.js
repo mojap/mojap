@@ -1,5 +1,9 @@
 function info(msg){
-	console.log(msg)
+	console.log("info"+msg)
+}
+
+function sever(msg){
+	console.log("sever::"+msg)
 }
 
 module.exports={
