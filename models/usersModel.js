@@ -9,9 +9,7 @@ function save(data,callback){
 }
 
 function findUser(query,callback){
-	console.log("findUser::query"+JSON.stringify(query))
-	  User.findOne(JSON.stringify(query))
-	  .select("-passWord")
+	  User.findOne(query)
     .exec(callback)
 }
 
