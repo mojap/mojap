@@ -13,7 +13,6 @@ router.post('/register',function(req,res){
 	})
 });
 
-
 router.post('/login',function(req,res){
 	console.log("got request "+JSON.stringify(req.body));
 	models.user.findUser(req.body,function(err,user){
