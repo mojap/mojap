@@ -15,10 +15,14 @@ router.post('/register',function(req,res){
 
 
 router.post('/login',function(req,res){
-	console.log("got request "+JSON.stringify(req.body));
 	models.user.findUser(req.body,function(err,user){
 		if(user) res.send(user)
-		else res.status(404).send()
+		else {
+			models.user.saveUser(req.body,function(err,newUser){
+				if(newUser) res.send(newUser)
+				else res.status(401)
+			})
+		}
 	})
 });
 
