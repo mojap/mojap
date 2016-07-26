@@ -3,6 +3,7 @@ var express = require('express');
 var router = express.Router();
 var models = require('../models')
 var utils = require('../utils')
+
 router.post('/register',function(req,res){
 	console.log("got request "+JSON.stringify(req.body));
 	var userData = req.body

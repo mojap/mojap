@@ -5,16 +5,17 @@ var User = mongoose.model('User', UserSchema.schema)
 
 function saveUser(data,callback){
 	var user = new User(data)
-	user.save(function(err,data){
-		if(err) return callback(err,null)
-		else return callback(null,data)
+	user.save(function(err,user,numAffects){
+		return callback(err,user)
 	})
 }
 
 function findUser(query,callback){
 	User.findOne(query)
 			.select("-passWord")
-			.exec(callback)
+			.exec(function(err,user){
+				return callback(err,user)
+			})
 }
 
 function updateUser(query,data,callback){

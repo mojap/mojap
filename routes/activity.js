@@ -12,7 +12,7 @@ router.post('/',function(req,res){
       models.activity.lastActivity(activityData.authId,callback)
     },function(activity,callback){
       console.log('lastActivity::'+JSON.stringify(activity))
-      var currentDate = utils.moment().utc()
+      var currentDate = utils.moment()
       var currentDateTillHr = new utils.moment({
         year: currentDate.year(),
         month: currentDate.month(),
@@ -20,7 +20,7 @@ router.post('/',function(req,res){
         hour: currentDate.hours(),
         minute: 0,
         seconds: 0
-      })
+      }).utc()
       console.log('currentDateTillHr' + currentDateTillHr.format())
       if(utils._.isUndefined(activity) || utils._.isNull(activity) || utils._.isEmpty(activity)) {
         activityData.beedCount = activityData.beedCountForDay
@@ -54,7 +54,7 @@ router.get('/:authId/:duration',function(req,res){
   var authId = req.param('authId')
   var duration = req.param('duration')
   models.activity.findActivity(authId,duration,function(err,activities){
-    if(activities) res.send(activities)
+    if(activities) res.send({value:activities})
     else res.status(404).send()
   })
 });

@@ -3,7 +3,7 @@ var ActivitySchema = require('./schema/activitySchema')
 
 var Activity = mongoose.model('Activity', ActivitySchema.schema)
 var utils = require('../utils')
-mongoose.set('debug','true')
+
 function save(data,callback){
   utils.async.waterfall([
     function(callback){
