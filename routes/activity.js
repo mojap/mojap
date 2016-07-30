@@ -2,6 +2,7 @@ var express = require('express');
 
 var router = express.Router();
 var models = require('../models')
+var service = require('../service')
 var utils = require('../utils')
 
 router.post('/',function(req,res){
@@ -53,10 +54,40 @@ router.get('/:authId/:duration',function(req,res){
   console.log("GET::activity::got request "+JSON.stringify(req.body));
   var authId = req.param('authId')
   var duration = req.param('duration')
-  models.activity.findActivity(authId,duration,function(err,activities){
-    if(activities) res.send({value:activities})
-    else res.status(404).send()
-  })
+  utils.async.waterfall([
+    function(callback){
+      models.activity.findActivity(authId,duration,callback)
+    },function(activities,callback){
+      if(activities) {
+        switch (duration) {
+          case "day" :
+            service.activityService.fillmissingTime(service.activityService.formatActivities(activities),24,"hours",callback)
+            break;
+          case "week" :
+            service.activityService.fillmissingTime(service.activityService.formatActivities(activities),1,"weeks",callback)
+            break
+          case "month" :
+            service.activityService.fillmissingTime(service.activityService.formatActivities(activities),1,"months",callback)
+            break
+          default:
+            callback(null,formatActivities(activities))
+            break
+        }
+      }else callback(null,null)
+    }
+  ],
+    function(err,activityList){
+      if(!err) {
+        var highestActivity = utils._.maxBy(activityList, function (activity) {
+          if(activity.beedCount>0)
+            return activity.beedCount
+        })
+        console.log("highestActivity::"+JSON.stringify(highestActivity,null,'  '))
+        res.send({value: activityList, highestActivity: highestActivity})
+      }
+      else res.status(404).send()
+    }
+  )
 });
 
 module.exports = router;

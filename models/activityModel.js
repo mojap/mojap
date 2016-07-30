@@ -29,20 +29,40 @@ function lastActivity(authId,callback){
 
 function findActivity(authId,duration,callback){
   var query = ""
+  var dateFilter = utils.moment().utc().add(-24,"hours")
   switch (duration){
     case "day" :
-      query={dateTime:{$gt:new Date(Date.now() - 24*60*60 * 1000)}}
+      dateFilter = utils.moment().utc().add(-24,"hours")
+      query=[
+        {"$match":{authId:authId,dateTime:{$gt:new Date(dateFilter)}}},
+        {"$group" : { "_id" :  { $dateToString: { format: "%Y-%m-%d %H:00:00", date: "$dateTime" }} , beedCount : { $sum : "$beedCount" } }}
+      ]
       break;
     case "week" :
-      query={dateTime:{$gt:new Date(Date.now() - 24*60*60 * 1000*7)}}
+      dateFilter = utils.moment().utc().add(-7,"days")
+      query=[
+        {"$match":{authId:authId,dateTime:{$gt:new Date(dateFilter)}}},
+        {"$group" : { "_id" :  { $dateToString: { format: "%Y-%m-%d 00:00:00", date: "$dateTime" }} , beedCount : { $sum : "$beedCount" } }}
+      ]
+      break
+    case "month" :
+      dateFilter = utils.moment().utc().add(-1,"month")
+      query=[
+        {"$match":{authId:authId,dateTime:{$gt:new Date(dateFilter)}}},
+        {"$group" : { "_id" :  { $dateToString: { format: "%Y-%m-%d 00:00:00", date: "$dateTime" }} , beedCount : { $sum : "$beedCount" } }}
+      ]
       break
     default:
-      query={dateTime:{$gt:new Date(Date.now() - 60*60 * 1000)}}
-      break
+      dateFilter = utils.moment().utc().add(-1,"hours")
+      query=[
+        {"$match":{authId:authId,dateTime:{$gt:new Date(dateFilter)}}},
+        {"$group" : { "_id" :  { $dateToString: { format: "%Y-%m-%d %H:00:00", date: "$dateTime" }} , beedCount : { $sum : "$beedCount" } }}
+      ]
+      break;
   }
-
-  Activity.find(query)
-    .exec(callback)
+  console.log("dateFilter::"+dateFilter)
+  console.log("query::"+JSON.stringify(query,null,'  '))
+  Activity.aggregate(query,callback)
 }
 
 module.exports = {
