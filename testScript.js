@@ -16,6 +16,8 @@ switch(command) {
 
     var momentHr = utils.moment.utc().format("YYYY-MM-DDTHH:00:00Z")
     console.log("momentHr"+momentHr)
+    var estTime = utils.moment.tz(Date.now(), 'America/New_York').format('MMM D, YYYY')
+    console.log("estTime::"+estTime)
     break;
   case "durationTest":
     var dateFilter = utils.moment().utc().add(-24,"hours")

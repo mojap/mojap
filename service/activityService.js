@@ -47,8 +47,19 @@ function formatActivities(activities){
   return activityRespList
 }
 
+function formatTimeZone(activities,timeOffset, callback){
+  utils._.map(activities,function(activity){
+    activity.dateTime=utils.moment.utc(activity.dateTime).add(timeOffset,'hours').format('YYYY-MM-DDTHH:00:00')
+  })
+
+  //console.log("activityRespList::"+JSON.stringify(activityRespList,null,"  "))
+  return callback(null,activities)
+}
+
+
 module.exports = {
   fillmissingHours:fillmissingHours,
   formatActivities:formatActivities,
-  fillmissingTime:fillmissingTime
+  fillmissingTime:fillmissingTime,
+  formatTimeZone:formatTimeZone
 }

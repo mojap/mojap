@@ -54,6 +54,8 @@ router.get('/:authId/:duration',function(req,res){
   console.log("GET::activity::got request "+JSON.stringify(req.body));
   var authId = req.param('authId')
   var duration = req.param('duration')
+  var offset = req.param('offset')
+  offset = offset?offset:0
   utils.async.waterfall([
     function(callback){
       models.activity.findActivity(authId,duration,callback)
@@ -70,20 +72,22 @@ router.get('/:authId/:duration',function(req,res){
             service.activityService.fillmissingTime(service.activityService.formatActivities(activities),1,"months",callback)
             break
           default:
-            callback(null,formatActivities(activities))
+            callback(null,service.activityService.formatActivities(activities))
             break
         }
       }else callback(null,null)
+    },function(activityList, callback){
+        service.activityService.formatTimeZone(activityList,offset,callback)
     }
   ],
-    function(err,activityList){
+    function(err,activityResp){
       if(!err) {
-        var highestActivity = utils._.maxBy(activityList, function (activity) {
+        var highestActivity = utils._.maxBy(activityResp, function (activity) {
           if(activity.beedCount>0)
             return activity.beedCount
         })
         console.log("highestActivity::"+JSON.stringify(highestActivity,null,'  '))
-        res.send({value: activityList, highestActivity: highestActivity})
+        res.send({value: activityResp, highestActivity: highestActivity})
       }
       else res.status(404).send()
     }
