@@ -56,28 +56,27 @@ router.get('/:authId/:duration',function(req,res){
   var duration = req.param('duration')
   var offset = req.param('offset')
   offset = offset?offset:0
+  console.log("offset"+offset)
   utils.async.waterfall([
     function(callback){
-      models.activity.findActivity(authId,duration,callback)
+      models.activity.findActivity(authId,duration,offset,callback)
     },function(activities,callback){
       if(activities) {
         switch (duration) {
           case "day" :
-            service.activityService.fillmissingTime(service.activityService.formatActivities(activities),24,"hours",callback)
+            service.activityService.fillmissingTime(service.activityService.formatActivities(activities,offset,'YYYY-MM-DDTHH:00:00'),24,"hours",offset,callback)
             break;
           case "week" :
-            service.activityService.fillmissingTime(service.activityService.formatActivities(activities),1,"weeks",callback)
+            service.activityService.fillmissingTime(service.activityService.formatActivities(activities,offset,'YYYY-MM-DDT00:00:00'),1,"weeks",offset,callback)
             break
           case "month" :
-            service.activityService.fillmissingTime(service.activityService.formatActivities(activities),1,"months",callback)
+            service.activityService.fillmissingTime(service.activityService.formatActivities(activities,offset,'YYYY-MM-DDT00:00:00'),1,"months",offset,callback)
             break
           default:
             callback(null,service.activityService.formatActivities(activities))
             break
         }
       }else callback(null,null)
-    },function(activityList, callback){
-        service.activityService.formatTimeZone(activityList,offset,callback)
     }
   ],
     function(err,activityResp){

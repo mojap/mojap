@@ -27,39 +27,29 @@ function lastActivity(authId,callback){
   Activity.findOne({authId:authId}).sort({dateTime:-1}).limit(1).exec(callback)
 }
 
-function findActivity(authId,duration,callback){
+function findActivity(authId,duration,offset,callback){
   var query = ""
-  var dateFilter = utils.moment().utc().add(-24,"hours")
+  var currentDate = utils.dateHelper.getCurrentDateWithOffset(offset)
+
+  var dateFilter = currentDate
   switch (duration){
     case "day" :
-      dateFilter = utils.moment().utc().add(-24,"hours")
-      query=[
-        {"$match":{authId:authId,dateTime:{$gt:new Date(dateFilter)}}},
-        {"$group" : { "_id" :  { $dateToString: { format: "%Y-%m-%d %H:00:00", date: "$dateTime" }} , beedCount : { $sum : "$beedCount" } }}
-      ]
+      dateFilter = currentDate
       break;
     case "week" :
-      dateFilter = utils.moment().utc().add(-7,"days")
-      query=[
-        {"$match":{authId:authId,dateTime:{$gt:new Date(dateFilter)}}},
-        {"$group" : { "_id" :  { $dateToString: { format: "%Y-%m-%d 00:00:00", date: "$dateTime" }} , beedCount : { $sum : "$beedCount" } }}
-      ]
+      dateFilter = currentDate.add(-7,"days")
       break
     case "month" :
-      dateFilter = utils.moment().utc().add(-1,"month")
-      query=[
-        {"$match":{authId:authId,dateTime:{$gt:new Date(dateFilter)}}},
-        {"$group" : { "_id" :  { $dateToString: { format: "%Y-%m-%d 00:00:00", date: "$dateTime" }} , beedCount : { $sum : "$beedCount" } }}
-      ]
+      dateFilter = currentDate.add(-1,"month")
       break
     default:
       dateFilter = utils.moment().utc().add(-1,"hours")
-      query=[
-        {"$match":{authId:authId,dateTime:{$gt:new Date(dateFilter)}}},
-        {"$group" : { "_id" :  { $dateToString: { format: "%Y-%m-%d %H:00:00", date: "$dateTime" }} , beedCount : { $sum : "$beedCount" } }}
-      ]
       break;
   }
+  query=[
+    {"$match":{authId:authId,dateTime:{$gte:new Date(dateFilter)}}},
+    {"$group" : { "_id" :  "$dateTime" , beedCount : { $sum : "$beedCount" } }}
+  ]
   console.log("dateFilter::"+dateFilter)
   console.log("query::"+JSON.stringify(query,null,'  '))
   Activity.aggregate(query,callback)

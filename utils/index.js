@@ -3,7 +3,7 @@ var ObjectId = mongoose.Types.ObjectId;
 var log = require('./log')
 var uuid = require('./uuidHelper')
 var lodash = require('lodash');
-
+var dateHelper = require('./dateHelper')
 function fromMoment(dateMoment) {
   return ObjectId.createFromTime(dateMoment.toDate().getTime()/1000);
 }
@@ -21,5 +21,6 @@ module.exports = {
   log:log,
   async: require('async'),
   moment: require('moment'),
-  uuid:uuid
+  uuid:uuid,
+  dateHelper:dateHelper
 };

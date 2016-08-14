@@ -4,6 +4,7 @@ var utils = require('./utils')
 var models = require('./models')
 var command = process.argv[2]
 var service = require('./service')
+var momentTz = require('moment-timezone')
 switch(command) {
   case "momentTest":
     var currentDate = utils.moment().utc()
@@ -55,7 +56,12 @@ switch(command) {
     service.activityService.fillmissingTime(activityDayList,1,"months",function(err,actRespList){
       console.log("########finalMonthSortList::\n"+JSON.stringify(actRespList,null,"  "))
     })
+  case "dateTest" :
+    var dateObj = utils.dateHelper.getCurrentDateWithOffset(5.5)
+    console.log("dateObj"+dateObj.format())
 
+    var currTime = momentTz.tz(utils.moment.utc('2016-08-13T07:00:00'),'America/New_York')
+    console.log("currTime"+currTime.format('YYYY-MM-DDTHH:00:00'))
   default:
     break;
 }
