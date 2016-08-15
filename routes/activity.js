@@ -14,17 +14,7 @@ router.post('/',function(req,res){
       models.activity.lastActivity(activityData.authId,offset,callback)
     },function(activity,callback){
       console.log('lastActivity::'+JSON.stringify(activity))
-/*
-      var currentDate = utils.moment()
-      var currentDateTillHr = new utils.moment({
-        year: currentDate.year(),
-        month: currentDate.month(),
-        day: currentDate.date(),
-        hour: currentDate.hours(),
-        minute: 0,
-        seconds: 0
-      }).utc()
-*/
+
       var currentDateTillHr = utils.moment.utc().format('YYYY-MM-DDTHH:00:00') //utils.moment().utc().format('YYYY-MM-DDTHH:00:00')
       console.log('currentDateTillHr' + currentDateTillHr)
       if(utils._.isUndefined(activity) || utils._.isNull(activity) || utils._.isEmpty(activity)) {
@@ -50,6 +40,21 @@ router.post('/',function(req,res){
   ],function(err,activity){
       if(activity) res.send(activity)
       else res.status(401)
+  })
+});
+
+router.post('/reset',function(req,res){
+  console.log("POST::activity::reset::got request "+JSON.stringify(req.body));
+  var resetData = req.body
+  var offset = req.param('offset')
+  utils.async.waterfall([
+    function(callback){
+      models.activity.resetActivity(resetData.authId,offset,callback)
+    }
+  ],function(err,removedDocs){
+    console.log('removedCount::'+removedDocs.n)
+    if(!err) res.send(removedDocs)
+    else res.status(401)
   })
 });
 

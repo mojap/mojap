@@ -29,6 +29,12 @@ function lastActivity(authId,offset,callback){
   Activity.findOne({authId:authId,dateTime:{$gte:new Date(currentDate)}}).sort({dateTime:-1}).limit(1).exec(callback)
 }
 
+function resetActivity(authId,offset,callback){
+  var currentDate = utils.dateHelper.getCurrentDateWithOffset(offset)
+  console.log('resetActivity::'+currentDate.format())
+  Activity.remove({authId:authId,dateTime:{$gte:new Date(currentDate)}}).exec(callback)
+}
+
 function findActivity(authId,duration,offset,callback){
   var query = ""
   var currentDate = utils.dateHelper.getCurrentDateWithOffset(offset)
@@ -60,5 +66,6 @@ function findActivity(authId,duration,offset,callback){
 module.exports = {
   save:save,
   findActivity:findActivity,
-  lastActivity:lastActivity
+  lastActivity:lastActivity,
+  resetActivity:resetActivity
 }
