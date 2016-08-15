@@ -63,9 +63,19 @@ function findActivity(authId,duration,offset,callback){
   Activity.aggregate(query,callback)
 }
 
+function totalBeeds(authId,callback){
+  query=[
+    {"$match":{authId:authId}},
+    {"$group" : { "_id" :  "$authId" , beedCount : { $sum : "$beedCount" } }}
+  ]
+  console.log("totalBeeds::query::"+JSON.stringify(query,null,'  '))
+  Activity.aggregate(query,callback)
+}
+
 module.exports = {
   save:save,
   findActivity:findActivity,
   lastActivity:lastActivity,
-  resetActivity:resetActivity
+  resetActivity:resetActivity,
+  totalBeeds:totalBeeds
 }

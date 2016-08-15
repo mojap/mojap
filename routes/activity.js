@@ -58,7 +58,6 @@ router.post('/reset',function(req,res){
   })
 });
 
-
 router.get('/:authId/:duration',function(req,res){
   console.log("GET::activity::got request "+JSON.stringify(req.body));
   var authId = req.param('authId')

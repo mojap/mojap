@@ -16,6 +16,28 @@ router.post('/register',function(req,res){
 
 
 router.post('/login',function(req,res){
+	utils.async.waterfall([
+		function(callback){
+			models.user.findUser(req.body,callback)
+		},function(user,callback) {
+			if(user) return callback(null, user)
+			else models.user.saveUser(req.body,callback)
+		},function(userDB,callback){
+			models.activity.totalBeeds(userDB.authId,function(err,data){
+				if(!err) {
+					var userLocal = JSON.parse(JSON.stringify(userDB))
+					console.log("login::userDB"+JSON.stringify((userDB)))
+					userLocal.totalBeeds = data[0].beedCount
+					return callback(null,userLocal)
+				}else return callback(err,null)
+			})
+		}
+	],function(err, loggedInUser){
+		if(loggedInUser) res.send(loggedInUser)
+		else res.status(401)
+	})
+
+/*
 	models.user.findUser(req.body,function(err,user){
 		if(user) res.send(user)
 		else {
@@ -25,6 +47,7 @@ router.post('/login',function(req,res){
 			})
 		}
 	})
+*/
 });
 
 module.exports = router;
