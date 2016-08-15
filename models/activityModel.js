@@ -23,8 +23,10 @@ function save(data,callback){
   ],callback)
 }
 
-function lastActivity(authId,callback){
-  Activity.findOne({authId:authId}).sort({dateTime:-1}).limit(1).exec(callback)
+function lastActivity(authId,offset,callback){
+  var currentDate = utils.dateHelper.getCurrentDateWithOffset(offset)
+  console.log('lastActivity::'+currentDate.format())
+  Activity.findOne({authId:authId,dateTime:{$gte:new Date(currentDate)}}).sort({dateTime:-1}).limit(1).exec(callback)
 }
 
 function findActivity(authId,duration,offset,callback){

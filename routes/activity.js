@@ -8,11 +8,13 @@ var utils = require('../utils')
 router.post('/',function(req,res){
   console.log("POST::activity::got request "+JSON.stringify(req.body));
   var activityData = req.body
+  var offset = req.param('offset')
   utils.async.waterfall([
     function(callback){
-      models.activity.lastActivity(activityData.authId,callback)
+      models.activity.lastActivity(activityData.authId,offset,callback)
     },function(activity,callback){
       console.log('lastActivity::'+JSON.stringify(activity))
+/*
       var currentDate = utils.moment()
       var currentDateTillHr = new utils.moment({
         year: currentDate.year(),
@@ -22,22 +24,24 @@ router.post('/',function(req,res){
         minute: 0,
         seconds: 0
       }).utc()
-      console.log('currentDateTillHr' + currentDateTillHr.format())
+*/
+      var currentDateTillHr = utils.moment.utc().format('YYYY-MM-DDTHH:00:00') //utils.moment().utc().format('YYYY-MM-DDTHH:00:00')
+      console.log('currentDateTillHr' + currentDateTillHr)
       if(utils._.isUndefined(activity) || utils._.isNull(activity) || utils._.isEmpty(activity)) {
         activityData.beedCount = activityData.beedCountForDay
-        activityData.dateTime = currentDateTillHr.format()
+        activityData.dateTime = currentDateTillHr
       }else{
         //var lastActivity = JSON.parse(JSON.stringify(activity))
         var lastActivity = activity
         //console.log('lastActivityJSON::'+JSON.stringify(lastActivity))
-        var lastActivityDate = utils.moment(lastActivity.dateTime)
-        console.log("lastActivity::beedCountForDay::"+lastActivity.beedCountForDay+"::beedCount::"+lastActivity.beedCount+",hours::"+lastActivityDate.hours())
-        if (currentDateTillHr.hours() == lastActivityDate.hours()) {
+        var lastActivityDate = utils.moment(lastActivity.dateTime).format('YYYY-MM-DDTHH:00:00')
+        console.log("lastActivity::beedCountForDay::"+lastActivity.beedCountForDay+"::beedCount::"+lastActivity.beedCount+",lastActivityDate::"+lastActivityDate)
+        if (currentDateTillHr == lastActivityDate) {
           activityData.beedCount = activityData.beedCountForDay - lastActivity.beedCountForDay + lastActivity.beedCount
           activityData.dateTime = lastActivity.dateTime
         } else {
           activityData.beedCount = activityData.beedCountForDay - lastActivity.beedCountForDay
-          activityData.dateTime = currentDateTillHr.format()
+          activityData.dateTime = currentDateTillHr
         }
       }
       console.log('activityData' + JSON.stringify(activityData))
