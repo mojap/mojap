@@ -24,9 +24,12 @@ function save(data,callback){
 }
 
 function lastActivity(authId,offset,callback){
+  console.log("activityModel::lastActivity::"+offset)
   var currentDate = utils.dateHelper.getCurrentDateWithOffset(offset)
   console.log('lastActivity::'+currentDate.format())
-  Activity.findOne({authId:authId,dateTime:{$gte:new Date(currentDate)}}).sort({dateTime:-1}).limit(1).exec(callback)
+  var query = {authId:authId,dateTime:{$gte:new Date(currentDate)}}
+  console.log("lastActivity::query"+JSON.stringify(query))
+  Activity.findOne(query).sort({dateTime:-1}).limit(1).exec(callback)
 }
 
 function resetActivity(authId,offset,callback){

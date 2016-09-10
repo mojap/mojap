@@ -9,6 +9,7 @@ router.post('/',function(req,res){
   console.log("POST::activity::got request "+JSON.stringify(req.body));
   var activityData = req.body
   var offset = req.param('offset')
+  console.log("activity::create::"+offset)
   utils.async.waterfall([
     function(callback){
       models.activity.lastActivity(activityData.authId,offset,callback)
@@ -47,6 +48,7 @@ router.post('/reset',function(req,res){
   console.log("POST::activity::reset::got request "+JSON.stringify(req.body));
   var resetData = req.body
   var offset = req.param('offset')
+  console.log("activity::reset::"+offset)
   utils.async.waterfall([
     function(callback){
       models.activity.resetActivity(resetData.authId,offset,callback)

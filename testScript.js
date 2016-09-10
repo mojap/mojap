@@ -57,11 +57,15 @@ switch(command) {
       console.log("########finalMonthSortList::\n"+JSON.stringify(actRespList,null,"  "))
     })
   case "dateTest" :
-    var dateObj = utils.dateHelper.getCurrentDateWithOffset(5.5)
-    console.log("dateObj"+dateObj.format())
-
-    var currTime = momentTz.tz(utils.moment.utc('2016-08-13T07:00:00'),'America/New_York')
-    console.log("currTime"+currTime.format('YYYY-MM-DDTHH:00:00'))
+    var dateObj = utils.dateHelper.getCurrentDateWithOffset('America/Los_Angeles')
+    console.log("dateObj::"+dateObj.format())
+    console.log("date updated::"+new Date(dateObj));
+    //var currTime = momentTz.tz(utils.moment.utc('2016-08-13T07:00:00'),'America/New_York')
+    //console.log("currTime"+currTime.format('YYYY-MM-DDTHH:00:00'))
+    break;
+  case "lastActivity":
+    models.activity.lastActivity("")
+    break;
   default:
     break;
 }

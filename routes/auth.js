@@ -36,18 +36,6 @@ router.post('/login',function(req,res){
 		if(loggedInUser) res.send(loggedInUser)
 		else res.status(401)
 	})
-
-/*
-	models.user.findUser(req.body,function(err,user){
-		if(user) res.send(user)
-		else {
-			models.user.saveUser(req.body,function(err,newUser){
-				if(newUser) res.send(newUser)
-				else res.status(401)
-			})
-		}
-	})
-*/
 });
 
 module.exports = router;
