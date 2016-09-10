@@ -27,7 +27,9 @@ router.post('/login',function(req,res){
 				if(!err) {
 					var userLocal = JSON.parse(JSON.stringify(userDB))
 					console.log("login::userDB"+JSON.stringify((userDB)))
-					userLocal.totalBeeds = data[0].beedCount
+					console.log("login::data"+JSON.stringify(data))
+					if(!isInvalid(data) && !isInvalid(data[0]))
+						userLocal.totalBeeds = data[0].beedCount
 					return callback(null,userLocal)
 				}else return callback(err,null)
 			})
@@ -37,5 +39,9 @@ router.post('/login',function(req,res){
 		else res.status(401)
 	})
 });
+
+function isInvalid(value) {
+	return utils._.isUndefined(value) || utils._.isNull(value);
+}
 
 module.exports = router;
