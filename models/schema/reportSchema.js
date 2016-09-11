@@ -26,5 +26,3 @@ reportSchema.pre('validate', function(next) {
 module.exports = {
   schema: reportSchema
 }
-
-reportSchema.plugin(idValidator)

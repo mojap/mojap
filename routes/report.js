@@ -1,8 +1,9 @@
 var express = require('express')
 var router = express.Router()
 var utils = require('../utils')
-
-router.post('/',function(req,res){
+var models = require('../models')
+router.post('/create',function(req,res){
+  console.log("in report create"+JSON.stringify(req.body,null,"  "))
   createReport(req.body, function(err, report) {
     if (err) {
      res.statusCode(401)
@@ -18,7 +19,7 @@ function createReport(data, callback) {
       models.report.createReport(data, callback)
     },
     function(report, callback) {
-      if(utils._.isInvalid(report)) {
+      if(utils._.isNull(report) || utils._.isUndefined(report)) {
         return callback(null, null)
       }
       callback(null, report)
