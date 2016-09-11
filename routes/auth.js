@@ -14,6 +14,16 @@ router.post('/register',function(req,res){
 	})
 });
 
+router.post('/install',function(req,res){
+	utils.async.waterfall([
+		function(callback){
+			models.user.addDevice(req.body,callback)
+		}
+	],function(err, user){
+		if(user) res.send(user)
+		else res.status(401)
+	})
+});
 
 router.post('/login',function(req,res){
 	utils.async.waterfall([

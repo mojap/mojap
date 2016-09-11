@@ -6,7 +6,9 @@ var UserSchema = new Schema({
 	//userName: { type: String, required: true },
 	authId: { type: String, required: true },
 	//password: { type: String, required: true },
-	phoneNo: { type: String, required: true }
+	phoneNo: { type: String, required: true },
+	token:String,
+	type:String
 })
 
 //UserSchema.index({'userName':1}, {'unique': true})
