@@ -26,6 +26,7 @@ router.post('/install',function(req,res){
 });
 
 router.post('/login',function(req,res){
+	var offset = req.param('offset')
 	utils.async.waterfall([
 		function(callback){
 			models.user.findUser(req.body,callback)
@@ -37,11 +38,23 @@ router.post('/login',function(req,res){
 				if(!err) {
 					var userLocal = JSON.parse(JSON.stringify(userDB))
 					console.log("login::userDB"+JSON.stringify((userDB)))
-					console.log("login::data"+JSON.stringify(data))
 					if(!isInvalid(data) && !isInvalid(data[0]))
 						userLocal.totalBeeds = data[0].beedCount
 					return callback(null,userLocal)
-				}else return callback(err,null)
+				}else return callback(err,userDB)
+			})
+		},function(userWithTotalBeeds,callback){
+			models.activity.lastActivity(userWithTotalBeeds.authId,offset,function(err,lastActivity){
+				if(!err) {
+					if(utils._.isUndefined(lastActivity) || utils._.isNull(lastActivity) || utils._.isEmpty(lastActivity)) {
+						return callback(err,userWithTotalBeeds)
+					}else{
+						var userLocal = JSON.parse(JSON.stringify(userWithTotalBeeds))
+						console.log("login::userWithTotalBeeds"+JSON.stringify((userWithTotalBeeds)))
+						userLocal.beedCountForDay = lastActivity.beedCountForDay
+						return callback(err,userLocal)
+					}
+				}else return callback(err,userWithTotalBeeds)
 			})
 		}
 	],function(err, loggedInUser){
